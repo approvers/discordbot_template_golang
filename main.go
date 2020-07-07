@@ -13,18 +13,18 @@ func main() {
 	session, err := discordgo.New()
 	if err != nil {
 		fmt.Println("Error in create session")
-		fmt.Println(err)
+		panic(err)
 	}
 
-	session.Token = loadToken()
+	discordToken := loadToken()
+	session.Token = discordToken
 
 	session.AddHandler(onMessageCreate)
 
-	err = session.Open()
-	defer session.Close()
-	if err != nil {
-		fmt.Println(err)
+	if err = session.Open(); err != nil {
+		panic(err)
 	}
+	defer session.Close()
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
@@ -42,7 +42,10 @@ func onMessageCreate(session *discordgo.Session, event *discordgo.MessageCreate)
 	/* メッセージを受け取った際の処理 */
 }
 
-func loadToken() (token string) {
-	token = os.Getenv("DISCORD_TOKEN")
-	return
+func loadToken() string {
+	token := os.Getenv("DISCORD_TOKEN")
+	if token == "" {
+		panic("no discord token exists.")
+	}
+	return token
 }
