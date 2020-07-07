@@ -13,18 +13,22 @@ func main() {
 	session, err := discordgo.New()
 	if err != nil {
 		fmt.Println("Error in create session")
-		fmt.Println(err)
+		panic(err)
 	}
 
-	session.Token = loadToken()
+	discordToken := loadToken()
+	if discordToken == nil {
+		panic("no discord token exists.")
+	}
+	session.Token = discordToken
 
 	session.AddHandler(onMessageCreate)
 
 	err = session.Open()
-	defer session.Close()
 	if err != nil {
-		fmt.Println(err)
+		panic(err)
 	}
+	defer session.Close()
 
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
