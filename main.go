@@ -17,15 +17,14 @@ func main() {
 	}
 
 	discordToken := loadToken()
-	if discordToken == nil {
+	if discordToken == "" {
 		panic("no discord token exists.")
 	}
 	session.Token = discordToken
 
 	session.AddHandler(onMessageCreate)
 
-	err = session.Open()
-	if err != nil {
+	if err = session.Open(); err != nil {
 		panic(err)
 	}
 	defer session.Close()
