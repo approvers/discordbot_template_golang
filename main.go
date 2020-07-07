@@ -17,9 +17,6 @@ func main() {
 	}
 
 	discordToken := loadToken()
-	if discordToken == "" {
-		panic("no discord token exists.")
-	}
 	session.Token = discordToken
 
 	session.AddHandler(onMessageCreate)
@@ -45,7 +42,10 @@ func onMessageCreate(session *discordgo.Session, event *discordgo.MessageCreate)
 	/* メッセージを受け取った際の処理 */
 }
 
-func loadToken() (token string) {
-	token = os.Getenv("DISCORD_TOKEN")
-	return
+func loadToken() string {
+	token := os.Getenv("DISCORD_TOKEN")
+	if token == "" {
+		panic("no discord token exists.")
+	}
+	return token
 }
